@@ -79,7 +79,14 @@ Since API2 is intended for returning data from the server only all requests shou
 \end{itemize}
 
 \subsubsection{API2 search query strings}
-The description parts of API2 take all of their parameters through their URL. Searches are performed by passing a query string. The main part of an API2 searcher query is name=value keys representing values for possible search parameters obtained from the \texttt{description} endpoint. These have the simple obvious form, for example \url{/api2/data/elliptic_curves_q?rank=0&torsion_order=2} is a search for rank=0, torsion order = 2 in the elliptic curves over Q. There are also other possible query parameters that are not directly related to searching, but to controlling the data returned. These are
+The description parts of API2 take all of their parameters through their URL. Searches are performed by passing a query string. The main part of an API2 searcher query is name=value keys representing values for possible search parameters obtained from the \texttt{description} endpoint. These have the simple obvious form for equality, for example \url{/api2/data/elliptic_curves_q?rank=0&conductor=11} is a search for rank=0, conductor = 11 in the elliptic curves over Q. Searching for conditions other than simple equality are performed by prepending an operator immediately after the = symbol. Currently there are 3 operators
+\begin{itemize}
+\item ">" - Test for greater than a value
+\item "<" - Test for less than a value
+\item "\%" - Test if a value is contained in a list
+\end{itemize}
+For example \url{/api2/data/elliptic_curves_q?rank=0&conductor=>11} is a search for rank=0, conductor > 11
+There are also other possible query parameters that are not directly related to searching, but to controlling the data returned. These are
 
 \begin{itemize}
 \item \_view\_start - Record to start viewing the list of returned fields. Should be given the value returned in the view\_next field of the information returned by a search to get the next "page" of the data
