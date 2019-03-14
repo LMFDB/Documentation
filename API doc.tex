@@ -70,12 +70,12 @@ Since API2 is intended for returning data from the server only all requests shou
 
 \begin{itemize}
 \item \url{/api2/description/searchers} - Describe the list of possible searchers
-\item \url{/api2/description/:searcher} - Describe the list of possible search parameters for a given searcher
-\item \url{/api2/inventory/:searcher} - Describe the list of possible fields that can be returned by a searcher
-\item \url{/api2/data/:searcher} - Perform a search using a given searcher. Query parameters taken from the searcher description are provided as an ampersand delimited query string to this endpoint. Non searching parameters are available and are all prepended by "\_"
-\item \url{/api2/pretty/:other_path} - This takes a valid other API path and produces a human readable (just) HTML page from the data contained. The other path should be the part after "api2" in the URL
-\item \url{/api2/singleton/:path} - This is intended to provide a URL that allows canonical reference to a single element of the database. The format of the singletons is not standardised and should not in general be used for machine readable access
-\item \url{/api2/live/:database/:collection} - This is intended to replicate the behaviour of the existing API. By specifying a database and collection name and then using a standard search string (as per the /data/:searcher endpoint) a search is performed on the raw database. This is not intended for normal access, but for debugging and testing purposes only.
+\item \url{/api2/description/<searcher>} - Describe the list of possible search parameters for a given searcher
+\item \url{/api2/inventory/<searcher>} - Describe the list of possible fields that can be returned by a searcher
+\item \url{/api2/data/<searcher>} - Perform a search using a given searcher. Query parameters taken from the searcher description are provided as an ampersand delimited query string to this endpoint. Non searching parameters are available and are all prepended by "\_"
+\item \url{/api2/pretty/<other_path>} - This takes a valid other API path and produces a human readable (just) HTML page from the data contained. The other path should be the part after "api2" in the URL
+\item \url{/api2/singleton/<path>} - This is intended to provide a URL that allows canonical reference to a single element of the database. The format of the singletons is not standardised and should not in general be used for machine readable access
+\item \url{/api2/livepg/<database>} - This is intended to replicate the behaviour of the existing API. By specifying a database name and then using a standard search string (as per the /data/<searcher> endpoint) a search is performed on the raw database. This is not intended for normal access, but for debugging and testing purposes only.
 \end{itemize}
 
 \subsubsection{API2 search query strings}
@@ -84,7 +84,7 @@ The description parts of API2 take all of their parameters through their URL. Se
 \begin{itemize}
 \item \_view\_start - Record to start viewing the list of returned fields. Should be given the value returned in the view\_next field of the information returned by a search to get the next "page" of the data
 \item \_max\_count - Maximum number of records to return from this search. Will not exceed the maximum number specified on the server but will be respected if lower than that value. For example, set to 1 if you are merely interested in the existence or non-existence of records of the specified type
-\item \_fields - The fields that should be returned by the search. The valid lists of fields should be inferred from a call to \url{/api2/inventory/:searcher} 
+\item \_fields - The fields that should be returned by the search. The valid lists of fields should be inferred from a call to \url{/api2/inventory/<searcher>} 
 \item \_exclude - If set = 1, change the operation of the \_fields key from being the fields that should be returned for found records to being fields that should be excluded from the return
 \end{itemize}
 
@@ -115,7 +115,7 @@ All API2 responses are as JSON documents complying with the ECMA-404 standard. C
 If the \texttt{type} field of the API2 response is "\texttt{API\_SEARCHERS}" then the \texttt{key} field will be \texttt{GLOBAL}. The \texttt{data} field will consist of a JSON object the keys of which correspond to unique named searchers. The names are used when querying or using the searcher. Each value for these keys has the following format
 
 \begin{lstlisting}[language=json,firstnumber=1]
-{"elliptic_curve_q":{
+{"elliptic_curves_q":{
 	"human_name":"Elliptic curves over q",
 	"desc":"Search elliptic curves defined over the rationals"}
 }
@@ -133,7 +133,7 @@ If the \texttt{type} field of the API2 response is "\texttt{API\_DESCRIPTIONS}" 
       "description": "CM code. 0 (for no CM), or a negative discriminant", 
       "example": "-163", 
       "type": "integer",
-      "canonical_name":"CMCODE",
+      "cname":"CMCODE",
       "codec":"CODEC_TO_COME"
     }
 }
@@ -155,7 +155,7 @@ If the \texttt{type} field of the API2 response is "\texttt{API\_INVENTORY}" the
       "description": "CM code. 0 (for no CM), or a negative discriminant", 
       "example": "-163", 
       "type": "integer",
-      "canonical_name":"CMCODE",
+      "cname":"CMCODE",
       "codec":"CODEC_TO_COME"
     }
 }
@@ -209,7 +209,7 @@ Client would connect to \url{/api2/description/searchers}. Result is
 "key": "GLOBAL",
 "built_at": "2010-04-20T20:08:21.634121",
 "data": [
-	{""elliptic_curve_q":{
+	{""elliptic_curves_q":{
 	"human_name":"Elliptic curves over q",
 	"desc":"Search elliptic curves defined over the rationals"}
 	},
@@ -220,11 +220,11 @@ Client would connect to \url{/api2/description/searchers}. Result is
 \end{lstlisting}
 (In a fully working implementation there would be many more than this, but a client should cope with what is available). The client decides that it wishes to search in \texttt{elliptic\_curve\_q}.
 \subsection{Query searcher}
-Client connects to \url{/api2/description/elliptic_curve_q}. Result is
+Client connects to \url{/api2/description/elliptic_curves_q}. Result is
 \begin{lstlisting}[language=json,firstnumber=1]
 {"api_version":"1.0.0",
 "type":"API_DESCRIPTIONS",
-"key": "description/elliptic_curve_q",
+"key": "description/elliptic_curves_q",
 "built_at": "2010-04-20T20:08:21.634121",
 "data": [
 	...
@@ -233,13 +233,13 @@ Client connects to \url{/api2/description/elliptic_curve_q}. Result is
 	      "description": "Cremona label", 
 	      "example": "100002a1", 
 	      "type": "string",
-	      "canonical_name":"CREMONA_LABEL"
+	      "cname":"CREMONA_LABEL"
 	  },
 	  "lmfdb_label": {
 	      "description": "LMFDB label", 
 	      "example": "100.a1", 
 	      "type": "string"
-	      "canonical_name":"LMFDB_LABEL"
+	      "cname":"LMFDB_LABEL"
 	    },
 	    ...
 	    ...
@@ -250,24 +250,24 @@ The client parses this response and knows that it seeks to search on the canonic
 \subsection{(Optional) Get inventory information}
 If a client is purely recovering data for a human to manage then this step can be skipped, but a typical client will get inventory information about the data returned by a search on the selected searcher.
 
-Client connects to \url{/api2/inventory/elliptic_curve_q}. Result is
+Client connects to \url{/api2/inventory/elliptic_curves_q}. Result is
 \begin{lstlisting}[language=json,firstnumber=1]
 {"api_version":"1.0.0",
 "type":"API_INVENTORY",
-"key": "inventory/elliptic_curve_q",
+"key": "inventory/elliptic_curves_q",
 "built_at": "2010-04-20T20:08:21.634121",
 "data": [
     "2adic_index": {
       "description": "index in GL(2,Z2) of the 2-adicrepresentation (or 0 for CM curves)", 
       "example": "1", 
       "type": "integer",
-      "canonical_name":"2ADIC_INDEX"
+      "cname":"2ADIC_INDEX"
     }, 
     "2adic_label": {
       "description": "Rouse label of the associated modular curve (null for CM curves). Based on Rouse, Zureik-Brown classification", 
       "example": "X1", 
       "type": "string",
-      "canonical_name":"2ADIC_LABEL"
+      "cname":"2ADIC_LABEL"
     }, 
     ...
     ...
@@ -282,7 +282,7 @@ Knowing what it wants to search on and what it wants returned the client connect
 \begin{lstlisting}[language=json,firstnumber=1]
 {"api_version":"1.0.0",
 "type":"API_INVENTORY",
-"key": "inventory/elliptic_curve_q",
+"key": "inventory/elliptic_curves_q",
 "built_at": "2010-04-20T20:08:21.634121",
 "data": [
   "record_count":1,
